@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Пользователи</h1>
+
+<!-- Кнопка добавить -->
+<div style="margin-bottom: 20px;">
+    <button class="btn btn-primary" onclick="showAddUserModal()" style="
+        padding: 10px 20px;
+        font-size: 16px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    ">
+        <i>+</i> Добавить пользователя
+    </button>
+</div>
+
+<style>
+.common-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    table-layout: auto;
+}
+.common-table th,
+.common-table td {
+    padding: 16px 12px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+}
+.common-table th {
+    background: rgba(30, 41, 59, 0.5);
+    font-weight: 600;
+    color: var(--text);
+    position: sticky;
+    top: 0;
+}
+.common-table tr:hover {
+    background: rgba(30, 41, 59, 0.3);
+}
+.common-table .actions {
+    width: 200px;
+}
+.common-table .btn {
+    min-width: 96px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 13px;
+    padding: 0 12px;
+}
+</style>
+
+<table class="common-table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Логин</th>
+            <th>Роль</th>
+            <th>Запрос</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+        <tr>
+            <td>{{ user[0] }}</td>
+            <td>{{ user[1] }}</td>
+            <td>
+                {% if user[1] == 'admin' %}
+                    {{ user[2] }}
+                {% else %}
+                    <select class="form-control" onchange="changeRole(this, {{ user[0] }})" style="width:120px;">
+                        <option value="ученик" {% if user[2]=='ученик' %}selected{% endif %}>Ученик</option>
+                        <option value="учитель" {% if user[2]=='учитель' %}selected{% endif %}>Учитель</option>
+                        <option value="модератор" {% if user[2]=='модератор' %}selected{% endif %}>Модер</option>
+                        <option value="администратор" {% if user[2]=='администратор' %}selected{% endif %}>Админ</option>
+                    </select>
+                {% endif %}
+            </td>
+            <td>{{ user[3] or '—' }}</td>
+            {% if user[1] == 'admin' %}
+            <td style="color: var(--text-secondary); font-style: italic;">—</td>
+            {% else %}
+            <td class="actions">
+                <div style="display: flex; gap: 12px;">
+                    <button class="btn btn-outline" onclick="showPasswordModal({{ user[0] }})">
+                        <i>🔑</i> Пароль
+                    </button>
+                    <a href="{{ url_for('delete_user', user_id=user[0]) }}" class="btn btn-danger" onclick="return confirm('Удалить пользователя {{ user[1] }}?')">
+                        <i>🗑️</i> Удалить
+                    </a>
+                </div>
+            </td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Модалка изменения пароля -->
+<div id="passwordModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center;">
+    <div style="background:var(--surface); border-radius:12px; padding:24px; width:400px;">
+        <h3>Изменить пароль</h3>
+        <input type="hidden" id="edit_user_id">
+        <div class="form-group">
+            <label>Новый пароль</label>
+            <input type="password" id="new_password_modal" class="form-control">
+        </div>
+        <div style="display:flex; gap:12px; margin-top:20px;">
+            <button class="btn btn-primary" onclick="savePassword()">Сохранить</button>
+            <button class="btn btn-outline" onclick="closeModal()">Отмена</button>
+        </div>
+    </div>
+</div>
+
+<!-- Модалка добавления пользователя -->
+<div id="addUserModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center;">
+    <div style="background:var(--surface); border-radius:12px; padding:24px; width:400px;">
+        <h3>Добавить пользователя</h3>
+        <div class="form-group" style="margin-bottom:16px;">
+            <label>Логин</label>
+            <input type="text" id="new_username" class="form-control">
+        </div>
+        <div class="form-group" style="margin-bottom:16px;">
+            <label>Пароль</label>
+            <input type="password" id="new_password" class="form-control">
+        </div>
+        <div class="form-group" style="margin-bottom:20px;">
+            <label>Роль</label>
+            <select id="new_role" class="form-control">
+                <option value="ученик">Ученик</option>
+                <option value="учитель">Учитель</option>
+                <option value="модератор">Модератор</option>
+                <option value="администратор">Администратор</option>
+            </select>
+        </div>
+        <div style="display:flex; gap:12px; margin-top:20px;">
+            <button class="btn btn-primary" onclick="addUser()">Создать</button>
+            <button class="btn btn-outline" onclick="closeAddUserModal()">Отмена</button>
+        </div>
+    </div>
+</div>
+
+<script>
+function changeRole(select, userId) {
+    const role = select.value;
+    fetch('/admin/change_role/' + userId, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: 'new_role=' + encodeURIComponent(role)
+    }).then(() => location.reload());
+}
+
+function showPasswordModal(userId) {
+    document.getElementById('edit_user_id').value = userId;
+    document.getElementById('passwordModal').style.display = 'flex';
+}
+
+function closeModal() {
+    document.getElementById('passwordModal').style.display = 'none';
+}
+
+function savePassword() {
+    const userId = document.getElementById('edit_user_id').value;
+    const password = document.getElementById('new_password_modal').value;
+    if (!password) {
+        alert('Введите пароль');
+        return;
+    }
+    fetch('/admin/change_password/' + userId, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: 'new_password=' + encodeURIComponent(password)
+    }).then(() => {
+        closeModal();
+        alert('Пароль изменён');
+        location.reload();
+    });
+}
+
+function showAddUserModal() {
+    document.getElementById('addUserModal').style.display = 'flex';
+}
+
+function closeAddUserModal() {
+    document.getElementById('addUserModal').style.display = 'none';
+    document.getElementById('new_username').value = '';
+    document.getElementById('new_password').value = '';
+}
+
+function addUser() {
+    const username = document.getElementById('new_username').value.trim();
+    const password = document.getElementById('new_password').value.trim();
+    const role = document.getElementById('new_role').value;
+
+    if (!username || !password) {
+        alert('Заполните логин и пароль');
+        return;
+    }
+
+    fetch('/admin/add_user', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: 'username=' + encodeURIComponent(username) +
+              '&password=' + encodeURIComponent(password) +
+              '&role=' + encodeURIComponent(role)
+    })
+    .then(response => response.text())
+    .then(data => {
+        if (data.includes('Пользователь добавлен')) {
+            alert('Пользователь добавлен');
+            closeAddUserModal();
+            location.reload(); // Обновляем страницу
+        } else {
+            alert('Ошибка: ' + data);
+        }
+    });
+}
+</script>
+{% endblock %}

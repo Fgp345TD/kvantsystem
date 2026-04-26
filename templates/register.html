@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="
+    max-width: 360px;
+    margin: 0 auto;
+    padding: 48px 20px;
+    background: var(--surface);
+    border-radius: 16px;
+    text-align: center;
+">
+    <h1>Регистрация</h1>
+
+    <form method="POST" style="margin-top: 32px;">
+        <!-- Логин -->
+        <div style="margin-bottom: 20px; text-align: left;">
+            <label style="display: block; margin-bottom: 8px; color: var(--text); font-weight: 500;">Логин</label>
+            <input type="text" name="username" required
+                   style="width: 100%; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text);">
+        </div>
+
+        <!-- Пароль -->
+        <div style="margin-bottom: 28px; text-align: left;">
+            <label style="display: block; margin-bottom: 8px; color: var(--text); font-weight: 500;">Пароль</label>
+            <input type="password" name="password" required
+                   style="width: 100%; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text);">
+        </div>
+
+        <!-- Кнопка Зарегистрироваться -->
+        <button type="submit" class="btn btn-primary"
+                style="
+                    padding: 8px 24px;
+                    font-size: 15px;
+                    font-weight: 500;
+                    border-radius: 8px;
+                    display: inline-block;
+                    margin-bottom: 24px;
+                ">
+            Зарегистрироваться
+        </button>
+
+        <!-- Уже есть аккаунт? -->
+        <p style="color: var(--text-secondary); font-size: 14px; margin: 16px 0;">
+            Уже есть аккаунт?
+        </p>
+        <a href="{{ url_for('login') }}" class="btn btn-outline"
+           style="
+               padding: 8px 24px;
+               font-size: 15px;
+               font-weight: 500;
+               border-radius: 8px;
+               display: inline-block;
+           ">
+            Войти
+        </a>
+    </form>
+</div>
+{% endblock %}

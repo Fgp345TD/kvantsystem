@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Редактирование теста: {{ test[1] }}</h1>
+
+<form method="POST" style="margin-top: 32px;">
+    <div class="form-group" style="margin-bottom: 24px;">
+        <label>Название</label>
+        <input type="text" name="name" class="form-control" value="{{ test[1] }}" required>
+    </div>
+
+    <div class="form-group" style="margin-bottom: 24px;">
+        <label>Описание</label>
+        <textarea name="description" class="form-control">{{ test[2] or '' }}</textarea>
+    </div>
+
+    <div class="form-group" style="margin-bottom: 24px;">
+        <label>Макс. попыток</label>
+        <select name="max_attempts" class="form-control">
+            <option value="1" {% if test[4] == 1 %}selected{% endif %}>1</option>
+            <option value="2" {% if test[4] == 2 %}selected{% endif %}>2</option>
+            <option value="3" {% if test[4] == 3 %}selected{% endif %}>3</option>
+            <option value="5" {% if test[4] == 5 %}selected{% endif %}>5</option>
+        </select>
+    </div>
+
+    <div class="form-group" style="margin-bottom: 24px;">
+        <label>Статус</label>
+        <select name="is_public" class="form-control">
+            <option value="1" {% if test[5] %}selected{% endif %}>Публичный</option>
+            <option value="0" {% if not test[5] %}selected{% endif %}>Приватный</option>
+        </select>
+    </div>
+
+    <!-- Вопросы -->
+    <div id="questions-container">
+        {% for question in questions %}
+        <div class="question-card" style="
+            background: var(--surface);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+        ">
+            <div class="form-group" style="margin-bottom: 16px;">
+                <label>Вопрос {{ loop.index }}</label>
+                <input type="text" name="question_{{ loop.index }}" class="form-control" value="{{ question[2] }}" required>
+            </div>
+
+            <div class="answers-list">
+                {% set q_num = loop.index %}
+                {% set ans_list = question_answers[question[0]] %}
+                {% for answer in ans_list %}
+                <div class="answer-item" style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                    <input type="checkbox" name="correct_{{ q_num }}_{{ loop.index }}"
+                           {% if answer[3] %}checked{% endif %}>
+                    <input type="text" name="answer_{{ q_num }}_{{ loop.index }}"
+                           class="form-control" value="{{ answer[2] }}" required>
+                    <span class="correct-badge" style="
+                        display: {% if answer[3] %}inline-block{% else %}none{% endif %};
+                        background: rgba(16, 185, 129, 0.15);
+                        color: var(--success);
+                        padding: 4px 8px;
+                        border-radius: 4px;
+                        font-size: 12px;
+                    ">✅ Правильный</span>
+                </div>
+                {% endfor %}
+
+                {% for i in range(ans_list|length + 1, 5) %}
+                <div class="answer-item" style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                    <input type="checkbox" name="correct_{{ q_num }}_{{ i }}">
+                    <input type="text" name="answer_{{ q_num }}_{{ i }}" class="form-control" placeholder="Ответ {{ i }}">
+                    <span class="correct-badge" style="
+                        display: none;
+                        background: rgba(16, 185, 129, 0.15);
+                        color: var(--success);
+                        padding: 4px 8px;
+                        border-radius: 4px;
+                        font-size: 12px;
+                    ">✅ Правильный</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Кнопки -->
+    <div style="display: flex; justify-content: space-between; margin-top: 32px;">
+        <button type="button" class="btn btn-outline" onclick="addQuestion()" style="
+            min-width: 120px;
+            height: 36px;
+            padding: 0 16px;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        ">
+            <span>+</span> Добавить вопрос
+        </button>
+        <button type="submit" class="btn btn-primary" style="
+            min-width: 140px;
+            height: 36px;
+            padding: 0 16px;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        ">
+            <span>💾</span> Обновить тест
+        </button>
+    </div>
+</form>
+
+<script>
+let questionCount = {{ questions|length }};
+
+function addQuestion() {
+    questionCount++;
+    const container = document.getElementById('questions-container');
+
+    const card = document.createElement('div');
+    card.className = 'question-card';
+    card.innerHTML = `
+        <div class="form-group" style="margin-bottom: 16px;">
+            <label>Вопрос ${questionCount}</label>
+            <input type="text" name="question_${questionCount}" class="form-control" required placeholder="Введите вопрос">
+        </div>
+        <div class="answers-list">
+            <div class="answer-item" style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                <input type="checkbox" name="correct_${questionCount}_1">
+                <input type="text" name="answer_${questionCount}_1" class="form-control" placeholder="Ответ 1" required>
+                <span class="correct-badge" style="
+                    display: none;
+                    background: rgba(16, 185, 129, 0.15);
+                    color: var(--success);
+                    padding: 4px 8px;
+                    border-radius: 4px;
+                    font-size: 12px;
+                ">✅ Правильный</span>
+            </div>
+            <div class="answer-item" style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                <input type="checkbox" name="correct_${questionCount}_2">
+                <input type="text" name="answer_${questionCount}_2" class="form-control" placeholder="Ответ 2" required>
+                <span class="correct-badge" style="
+                    display: none;
+                    background: rgba(16, 185, 129, 0.15);
+                    color: var(--success);
+                    padding: 4px 8px;
+                    border-radius: 4px;
+                    font-size: 12px;
+                ">✅ Правильный</span>
+            </div>
+            <div class="answer-item" style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                <input type="checkbox" name="correct_${questionCount}_3">
+                <input type="text" name="answer_${questionCount}_3" class="form-control" placeholder="Ответ 3">
+                <span class="correct-badge" style="
+                    display: none;
+                    background: rgba(16, 185, 129, 0.15);
+                    color: var(--success);
+                    padding: 4px 8px;
+                    border-radius: 4px;
+                    font-size: 12px;
+                ">✅ Правильный</span>
+            </div>
+            <div class="answer-item" style="display: flex; align-items: center; gap: 12px;">
+                <input type="checkbox" name="correct_${questionCount}_4">
+                <input type="text" name="answer_${questionCount}_4" class="form-control" placeholder="Ответ 4">
+                <span class="correct-badge" style="
+                    display: none;
+                    background: rgba(16, 185, 129, 0.15);
+                    color: var(--success);
+                    padding: 4px 8px;
+                    border-radius: 4px;
+                    font-size: 12px;
+                ">✅ Правильный</span>
+            </div>
+        </div>
+    `;
+    container.appendChild(card);
+}
+</script>
+{% endblock %}

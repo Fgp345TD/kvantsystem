@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>{{ test_name }}</h1>
+
+<form method="POST" action="{{ url_for('submit_test', test_id=test_id) }}" style="margin-top: 24px;">
+    {% for question in questions %}
+    <div style="
+        background: var(--surface);
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 24px;
+        border: 1px solid var(--border);
+    ">
+        <h3 style="margin-top: 0; color: var(--text); font-size: 1.3rem;">
+            {{ loop.index }}. {{ question[2] }}
+        </h3>
+
+        {% for answer in question_answers[question[0]] %}
+        <label class="answer-option" style="
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            cursor: pointer;
+            transition: all 0.2s;
+        ">
+            <input type="radio" name="question_{{ question[0] }}" value="{{ answer[0] }}" required
+                   style="width: 20px; height: 20px; accent-color: var(--primary);">
+            <span style="font-size: 16px; color: var(--text);">{{ answer[2] }}</span>
+        </label>
+        {% endfor %}
+    </div>
+    {% endfor %}
+
+    <button type="submit" class="btn btn-primary" style="
+        width: 100%;
+        margin-top: 32px;
+        padding: 16px;
+        font-size: 16px;
+        font-weight: 500;
+    ">
+        Завершить тест
+    </button>
+</form>
+{% endblock %}

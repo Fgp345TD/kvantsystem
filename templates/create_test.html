@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Создание теста</h1>
+
+<form method="POST" style="margin-top: 32px;">
+    <div class="form-group" style="margin-bottom: 24px;">
+        <label>Название</label>
+        <input type="text" name="name" class="form-control" required>
+    </div>
+
+    <div class="form-group" style="margin-bottom: 24px;">
+        <label>Описание</label>
+        <textarea name="description" class="form-control"></textarea>
+    </div>
+
+    <div class="form-group" style="margin-bottom: 24px;">
+        <label>Макс. попыток</label>
+        <select name="max_attempts" class="form-control">
+            <option value="1" selected>1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="5">5</option>
+        </select>
+    </div>
+
+    <div class="form-group" style="margin-bottom: 24px;">
+        <label>Статус</label>
+        <select name="is_public" class="form-control">
+            <option value="1">Публичный</option>
+            <option value="0">Приватный</option>
+        </select>
+    </div>
+
+    <!-- Вопросы -->
+    <div id="questions-container">
+        <!-- Вопрос 1 -->
+        <div class="question-card" style="
+            background: var(--surface);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+        ">
+            <div class="form-group" style="margin-bottom: 16px;">
+                <label>Вопрос 1</label>
+                <input type="text" name="question_1" class="form-control" required placeholder="Введите вопрос">
+            </div>
+
+            <div class="answers-list">
+                <div class="answer-item" style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                    <input type="checkbox" name="correct_1_1">
+                    <input type="text" name="answer_1_1" class="form-control" placeholder="Ответ 1" required>
+                    <span class="correct-badge" style="
+                        display: none;
+                        background: rgba(16, 185, 129, 0.15);
+                        color: var(--success);
+                        padding: 4px 8px;
+                        border-radius: 4px;
+                        font-size: 12px;
+                    ">✅ Правильный</span>
+                </div>
+                <div class="answer-item" style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                    <input type="checkbox" name="correct_1_2">
+                    <input type="text" name="answer_1_2" class="form-control" placeholder="Ответ 2" required>
+                    <span class="correct-badge" style="
+                        display: none;
+                        background: rgba(16, 185, 129, 0.15);
+                        color: var(--success);
+                        padding: 4px 8px;
+                        border-radius: 4px;
+                        font-size: 12px;
+                    ">✅ Правильный</span>
+                </div>
+                <div class="answer-item" style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                    <input type="checkbox" name="correct_1_3">
+                    <input type="text" name="answer_1_3" class="form-control" placeholder="Ответ 3">
+                    <span class="correct-badge" style="
+                        display: none;
+                        background: rgba(16, 185, 129, 0.15);
+                        color: var(--success);
+                        padding: 4px 8px;
+                        border-radius: 4px;
+                        font-size: 12px;
+                    ">✅ Правильный</span>
+                </div>
+                <div class="answer-item" style="display: flex; align-items: center; gap: 12px;">
+                    <input type="checkbox" name="correct_1_4">
+                    <input type="text" name="answer_1_4" class="form-control" placeholder="Ответ 4">
+                    <span class="correct-badge" style="
+                        display: none;
+                        background: rgba(16, 185, 129, 0.15);
+                        color: var(--success);
+                        padding: 4px 8px;
+                        border-radius: 4px;
+                        font-size: 12px;
+                    ">✅ Правильный</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Кнопки -->
+    <div style="display: flex; justify-content: space-between; margin-top: 32px;">
+        <button type="button" class="btn btn-outline" onclick="addQuestion()" style="
+            min-width: 120px;
+            height: 36px;
+            padding: 0 16px;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        ">
+            <span>+</span> Добавить вопрос
+        </button>
+        <button type="submit" class="btn btn-primary" style="
+            min-width: 140px;
+            height: 36px;
+            padding: 0 16px;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        ">
+            <span>💾</span> Создать тест
+        </button>
+    </div>
+</form>
+
+<script>
+let questionCount = 1;
+
+function addQuestion() {
+    questionCount++;
+    const container = document.getElementById('questions-container');
+
+    const card = document.createElement('div');
+    card.className = 'question-card';
+    card.innerHTML = `
+        <div class="form-group" style="margin-bottom: 16px;">
+            <label>Вопрос ${questionCount}</label>
+            <input type="text" name="question_${questionCount}" class="form-control" required placeholder="Введите вопрос">
+        </div>
+
+        <div class="answers-list">
+            <div class="answer-item" style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                <input type="checkbox" name="correct_${questionCount}_1">
+                <input type="text" name="answer_${questionCount}_1" class="form-control" placeholder="Ответ 1" required>
+                <span class="correct-badge" style="
+                    display: none;
+                    background: rgba(16, 185, 129, 0.15);
+                    color: var(--success);
+                    padding: 4px 8px;
+                    border-radius: 4px;
+                    font-size: 12px;
+                ">✅ Правильный</span>
+            </div>
+            <div class="answer-item" style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                <input type="checkbox" name="correct_${questionCount}_2">
+                <input type="text" name="answer_${questionCount}_2" class="form-control" placeholder="Ответ 2" required>
+                <span class="correct-badge" style="
+                    display: none;
+                    background: rgba(16, 185, 129, 0.15);
+                    color: var(--success);
+                    padding: 4px 8px;
+                    border-radius: 4px;
+                    font-size: 12px;
+                ">✅ Правильный</span>
+            </div>
+            <div class="answer-item" style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                <input type="checkbox" name="correct_${questionCount}_3">
+                <input type="text" name="answer_${questionCount}_3" class="form-control" placeholder="Ответ 3">
+                <span class="correct-badge" style="
+                    display: none;
+                    background: rgba(16, 185, 129, 0.15);
+                    color: var(--success);
+                    padding: 4px 8px;
+                    border-radius: 4px;
+                    font-size: 12px;
+                ">✅ Правильный</span>
+            </div>
+            <div class="answer-item" style="display: flex; align-items: center; gap: 12px;">
+                <input type="checkbox" name="correct_${questionCount}_4">
+                <input type="text" name="answer_${questionCount}_4" class="form-control" placeholder="Ответ 4">
+                <span class="correct-badge" style="
+                    display: none;
+                    background: rgba(16, 185, 129, 0.15);
+                    color: var(--success);
+                    padding: 4px 8px;
+                    border-radius: 4px;
+                    font-size: 12px;
+                ">✅ Правильный</span>
+            </div>
+        </div>
+    `;
+    container.appendChild(card);
+}
+</script>
+{% endblock %}

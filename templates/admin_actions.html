@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Действия</h1>
+
+<div style="
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 24px;
+    background: var(--surface);
+    border-radius: 16px;
+">
+    <h2 style="margin-top: 0; color: var(--text);">Режимы работы сервера</h2>
+
+    <!-- Текущий режим -->
+    <div style="
+        background: rgba(59, 130, 246, 0.1);
+        border-left: 4px solid var(--primary);
+        padding: 16px;
+        margin: 24px 0;
+        border-radius: 0 8px 8px 0;
+        color: var(--text);
+    ">
+        <strong>Текущий режим:</strong>
+        {% if maintenance_mode == 'isolate' %}
+        <span style="color: #ef4444;">🔒 Сервер изолирован</span>
+        {% elif maintenance_mode == 'maintenance' %}
+        <span style="color: #f59e0b;">⏳ Технический перерыв</span>
+        {% else %}
+        <span style="color: #10b981;">✅ Работает нормально</span>
+        {% endif %}
+    </div>
+
+    <!-- Кнопки -->
+<div style="display: flex; flex-direction: column; gap: 16px;">
+    <button onclick="setMode('isolate')" class="btn btn-danger" style="
+        padding: 14px;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        background: #ef4444;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        width: 100%;
+    ">
+        <span>🔒</span>
+        Включить режим изоляции
+    </button>
+
+    <button onclick="setMode('maintenance')" class="btn" style="
+        padding: 14px;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        background: #f59e0b; /* Жёлтый (amber-500) */
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        width: 100%;
+    ">
+        <span>⏳</span>
+        Включить технический перерыв
+    </button>
+
+    <button onclick="setMode('normal')" class="btn btn-success" style="
+        padding: 14px;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        background: #10b981;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        width: 100%;
+    ">
+        <span>✅</span>
+        Включить нормальный режим
+    </button>
+</div>
+
+<script>
+function setMode(mode) {
+    if (!confirm(`Вы уверены? Это повлияет на всех пользователей.`)) return;
+    fetch('/admin/set_mode/' + mode)
+        .then(res => res.json())
+        .then(data => {
+            alert(data.message);
+            location.reload();
+        });
+}
+</script>
+{% endblock %}

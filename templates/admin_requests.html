@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Запросы на новые роли</h1>
+
+{% if requests %}
+<style>
+.common-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    table-layout: auto;
+}
+.common-table th,
+.common-table td {
+    padding: 16px 12px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+}
+.common-table th {
+    background: rgba(30, 41, 59, 0.5);
+    font-weight: 600;
+    color: var(--text);
+    position: sticky;
+    top: 0;
+}
+.common-table tr:hover {
+    background: rgba(30, 41, 59, 0.3);
+}
+.common-table .actions {
+    width: 200px;
+}
+.common-table .btn {
+    min-width: 96px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 13px;
+    padding: 0 12px;
+}
+</style>
+
+<table class="common-table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Логин</th>
+            <th>Текущая роль</th>
+            <th>Запрашиваемая роль</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for req in requests %}
+        <tr>
+            <td>{{ req[0] }}</td>
+            <td>{{ req[1] }}</td>
+            <td>{{ req[2] }}</td>
+            <td>{{ req[3] }}</td>
+            <td class="actions">
+                <div style="display: flex; gap: 12px;">
+                    <a href="{{ url_for('grant_requested_role', user_id=req[0]) }}" class="btn btn-success">
+                        <i>✅</i> Подтвердить
+                    </a>
+                    <a href="{{ url_for('reject_request', user_id=req[0]) }}" class="btn btn-outline">
+                        <i>❌</i> Отклонить
+                    </a>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div style="background: var(--surface); border-radius: 12px; padding: 60px 20px; text-align: center;">
+    <div style="font-size: 48px; margin-bottom: 20px; color: var(--text-secondary);">📋</div>
+    <h2>Нет запросов на новые роли</h2>
+    <p style="color: var(--text-secondary); max-width: 500px; margin: 0 auto;">
+        Пользователи ещё не отправляли запросы на изменение роли.
+    </p>
+</div>
+{% endif %}
+{% endblock %}

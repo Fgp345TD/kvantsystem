@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Детализация результата</h1>
+
+<div style="
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 24px;
+    margin-top: 24px;
+    text-align: center;
+">
+    <h2 style="margin: 0 0 16px 0; color: var(--text);">
+        {{ score }} из {{ total }}
+    </h2>
+    <p style="color: var(--text-secondary); font-size: 18px; margin: 0;">
+        {{ (score / total * 100)|round(1) }}%
+    </p>
+</div>
+
+{% if rows %}
+<h2 style="margin-top: 32px;">Детализация ответов</h2>
+<div style="margin-top: 20px;">
+    {% for row in rows %}
+    {% set question = row[0] %}
+    {% set user_answer = row[1] %}
+    {% set is_correct = row[2] %}
+    <div style="
+        background: var(--surface);
+        border-radius: 8px;
+        padding: 16px;
+        margin-bottom: 12px;
+        border-left: 4px solid {% if is_correct %}#10b981{% else %}#ef4444{% endif %};
+    ">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div style="flex: 1;">
+                <p style="margin: 0 0 8px 0; color: var(--text);"><strong>{{ question }}</strong></p>
+                <p style="margin: 0; color: var(--text-secondary); font-style: italic;">
+                    Ваш ответ: {{ user_answer or 'Не отвечено' }}
+                </p>
+            </div>
+            <div style="font-size: 24px; margin-left: 16px;">
+                {% if is_correct %}
+                <span style="color: #10b981;">✓</span>
+                {% else %}
+                <span style="color: #ef4444;">✗</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div style="margin-top: 32px;">
+    <a href="{{ url_for('test_history') }}" class="btn btn-primary">
+        <i>←</i> Назад
+    </a>
+</div>
+{% endblock %}

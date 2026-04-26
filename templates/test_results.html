@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Результаты теста</h1>
+
+{% if results %}
+<style>
+.common-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    table-layout: auto;
+}
+.common-table th,
+.common-table td {
+    padding: 16px 12px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+}
+.common-table th {
+    background: rgba(30, 41, 59, 0.5);
+    font-weight: 600;
+    color: var(--text);
+    position: sticky;
+    top: 0;
+}
+.common-table tr:hover {
+    background: rgba(30, 41, 59, 0.3);
+}
+.common-table .actions {
+    width: 160px;
+}
+.common-table .btn {
+    min-width: 100px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 13px;
+    padding: 0 12px;
+}
+</style>
+
+<table class="common-table">
+    <thead>
+        <tr>
+            <th>Логин</th>
+            <th>Баллы</th>
+            <th>Процент</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in results %}
+        <tr>
+            <td>{{ row[1] }}</td>
+            <td>{{ row[2] }} из {{ row[3] }}</td>
+            <td>{{ (row[2] / row[3] * 100)|round(1) }}%</td>
+            <td class="actions">
+                <form method="POST" action="{{ url_for('give_extra_attempt', test_id=test_id, user_id=row[0]) }}" style="display:inline;">
+                    <button type="submit" class="btn btn-outline" onclick="return confirm('Выдать дополнительную попытку пользователю {{ row[1] }}?')">
+                        <i>➕</i> Доп. попытка
+                    </button>
+                </form>
+            </td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="4" style="text-align:center; padding: 40px; color: var(--text-secondary);">
+                Нет результатов
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div style="background: var(--surface); border-radius: 12px; padding: 60px 20px; text-align: center;">
+    <div style="font-size: 48px; margin-bottom: 20px; color: var(--text-secondary);">📊</div>
+    <h2>Нет результатов</h2>
+    <p style="color: var(--text-secondary);">Пока никто не прошёл этот тест.</p>
+</div>
+{% endif %}
+{% endblock %}

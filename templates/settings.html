@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Настройки</h1>
+
+<div style="
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 24px;
+    background: var(--surface);
+    border-radius: 16px;
+">
+    <!-- Блок изменение пароля -->
+    <div style="text-align: center; margin-bottom: 40px;">
+        <h2 style="margin-top: 0; color: var(--text);">Изменить пароль</h2>
+
+        <div class="form-group" style="margin: 20px 0;">
+            <label style="display: block; margin-bottom: 8px; color: var(--text);">Текущий пароль</label>
+            <input type="password" id="current_password" class="form-control" placeholder="Введите текущий пароль" style="width: 100%; max-width: 300px; margin: 0 auto;">
+        </div>
+
+        <div class="form-group" style="margin: 20px 0;">
+            <label style="display: block; margin-bottom: 8px; color: var(--text);">Новый пароль</label>
+            <input type="password" id="new_password" class="form-control" placeholder="Новый пароль" style="width: 100%; max-width: 300px; margin: 0 auto;">
+        </div>
+
+        <button class="btn btn-primary" onclick="changePassword()" style="
+            margin-top: 24px;
+            min-width: 180px;
+        ">
+            <i>🔑</i> Изменить пароль
+        </button>
+    </div>
+
+    <!-- Кнопка запроса роли учителя -->
+    <div style="text-align: center; margin-bottom: 40px;">
+        <h3 style="margin: 0 0 16px 0; color: var(--text);">Роль учителя</h3>
+        <p style="color: var(--text-secondary); margin-bottom: 20px; max-width: 300px; margin-left: auto; margin-right: auto;">
+            Если вы хотите создавать тесты, отправьте запрос, нажав на кнопку.
+        </p>
+
+        {% if user_role != 'учитель' and requested_role != 'учитель' %}
+        <button class="btn btn-danger" onclick="requestTeacher()" style="
+            min-width: 180px;
+        ">
+            <i>🎓</i> Запросить роль учителя
+        </button>
+        {% elif requested_role == 'учитель' %}
+        <div style="
+            background: rgba(236, 72, 153, 0.1);
+            border-left: 4px solid var(--danger);
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+            display: inline-block;
+            color: var(--danger);
+            font-weight: 500;
+        ">
+            ✅ Запрос отправлен
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Кнопка запроса роли модератора -->
+    <div style="text-align: center; margin-bottom: 40px;">
+        <h3 style="margin: 0 0 16px 0; color: var(--text);">Роль модератора</h3>
+        <p style="color: var(--text-secondary); margin-bottom: 20px; max-width: 300px; margin-left: auto; margin-right: auto;">
+            Если вы хотите модерировать, отправьте запрос, нажав на кнопку.
+        </p>
+
+        {% if user_role != 'модератор' and requested_role != 'модератор' %}
+        <button class="btn btn-success" onclick="requestModerator()" style="
+            min-width: 180px;
+        ">
+            <i>🛡️</i> Запросить роль модератора
+        </button>
+        {% elif requested_role == 'модератор' %}
+        <div style="
+            background: rgba(34, 197, 94, 0.1);
+            border-left: 4px solid var(--success);
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+            display: inline-block;
+            color: var(--success);
+            font-weight: 500;
+        ">
+            ✅ Запрос отправлен
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Кнопка удаления аккаунта -->
+    <div style="text-align: center;">
+        <h3 style="margin: 0 0 16px 0; color: var(--text);">Удалить аккаунт</h3>
+        <p style="color: var(--text-secondary); margin-bottom: 20px; max-width: 300px; margin-left: auto; margin-right: auto;">
+            Этот аккаунт будет удалён навсегда.
+        </p>
+
+        <button class="btn btn-danger" onclick="deleteAccount()" style="
+            min-width: 180px;
+        ">
+            <i>🗑️</i> Удалить аккаунт
+        </button>
+    </div>
+</div>
+
+<script>
+function changePassword() {
+    const curr = document.getElementById('current_password').value;
+    const newP = document.getElementById('new_password').value;
+    if (!curr || !newP) {
+        alert('Заполните оба поля');
+        return;
+    }
+    fetch('{{ url_for('settings') }}', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: 'current_password=' + encodeURIComponent(curr) + '&new_password=' + encodeURIComponent(newP)
+    }).then(() => {
+        alert('Пароль успешно изменён');
+        document.getElementById('current_password').value = '';
+        document.getElementById('new_password').value = '';
+    });
+}
+
+function requestTeacher() {
+    fetch('{{ url_for('settings') }}', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: 'request_teacher=1'
+    }).then(() => location.reload());
+}
+
+function requestModerator() {
+    if (confirm('Отправить запрос на роль модератора?')) {
+        fetch('/request_moderator', { method: 'POST' })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                location.reload();
+            });
+    }
+}
+
+function deleteAccount() {
+    if (confirm('Вы уверены? Этот аккаунт будет удалён навсегда.')) {
+        fetch('/delete_account', { method: 'POST' })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                window.location.href = '/login';
+            });
+    }
+}
+</script>
+{% endblock %}

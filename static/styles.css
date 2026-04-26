@@ -1,0 +1,342 @@
+:root {
+    --bg: #0f172a;
+    --surface: #1e293b;
+    --text: #e2e8f0;
+    --text-secondary: #94a3b8;
+    --primary: #3b82f6;
+    --primary-hover: #60a5fa;
+    --danger: #ef4444;
+    --success: #10b981;
+    --border: #334155;
+    --shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    --radius: 12px;
+    --transition: all 0.3s ease;
+    --font-family: 'Segoe UI', 'Roboto', sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-family);
+    background-color: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 16px;
+}
+
+/* Шапка */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 0;
+    margin-bottom: 32px;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--primary);
+}
+
+.nav-links {
+    display: flex;
+    gap: 20px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: var(--text-secondary);
+    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: var(--radius);
+    transition: var(--transition);
+}
+
+.nav-links a:hover {
+    background-color: rgba(59, 130, 246, 0.1);
+    color: var(--primary);
+}
+
+.nav-links a.active {
+    background-color: rgba(59, 130, 246, 0.2);
+    color: var(--primary);
+}
+
+/* Контент */
+.content {
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 32px;
+    margin-bottom: 32px;
+}
+
+h1, h2, h3 {
+    color: var(--text);
+    margin: 0 0 20px 0;
+}
+
+/* Формы */
+.form-group {
+    margin-bottom: 24px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--text);
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    color: var(--text);
+    font-size: 16px;
+    transition: var(--transition);
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+/* КНОПКИ */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    text-decoration: none;
+    color: white;
+}
+
+.btn i {
+    font-size: 14px;
+}
+
+.btn-primary {
+    background: var(--primary);
+}
+.btn-primary:hover {
+    background: var(--primary-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
+}
+
+.btn-danger {
+    background: var(--danger);
+}
+.btn-danger:hover {
+    background: #d32f2f;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 1px solid var(--primary);
+    color: var(--primary);
+}
+.btn-outline:hover {
+    background: rgba(59, 130, 246, 0.1);
+}
+
+/* ВЫПАДАЮЩИЙ СПИСОК */
+.custom-select {
+    position: relative;
+    display: inline-block;
+    width: 200px;
+}
+
+.custom-select select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--text);
+    appearance: none;
+    cursor: pointer;
+    font-family: var(--font-family);
+}
+
+.custom-select::after {
+    content: '▼';
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+    pointer-events: none;
+    font-size: 12px;
+}
+
+.custom-select select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+/* ДЕЙСТВИЯ В ТАБЛИЦЕ */
+.action-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border-radius: 8px;
+    background: var(--surface);
+    transition: background 0.3s;
+}
+.action-card:hover {
+    background: rgba(30, 41, 59, 0.5);
+}
+
+.action-btn {
+    flex: 1;
+    min-width: 100px;
+}
+
+/* УВЕДОМЛЕНИЯ */
+.notifications {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+    width: 320px;
+}
+
+.notification {
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 16px;
+    margin-bottom: 12px;
+    animation: slideIn 0.4s ease-out;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-left: 4px solid var(--primary);
+}
+
+.notification.success { border-left-color: var(--success); }
+.notification.error { border-left-color: var(--danger); }
+
+.notification .close-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.2rem;
+    cursor: pointer;
+    opacity: 0.7;
+}
+.notification .close-btn:hover { opacity: 1; }
+
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+/* МОБИЛЬНАЯ АДАПТИВНОСТЬ */
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        gap: 16px;
+    }
+    .nav-links {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .content {
+        padding: 20px;
+    }
+    .notifications {
+        width: 95%;
+        max-width: 320px;
+        right: 10px;
+        bottom: 10px;
+    }
+}
+
+/* Кнопки — единый стиль */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 14px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: white;
+}
+.btn-primary:hover {
+    background: var(--primary-hover);
+}
+
+.btn-success {
+    background: var(--success);
+    color: white;
+}
+.btn-success:hover {
+    background: #0b875b;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 1px solid var(--primary);
+    color: var(--primary);
+}
+.btn-outline:hover {
+    background: rgba(59, 130, 246, 0.1);
+}
+
+.btn-danger {
+    background: var(--danger);
+    color: white;
+}
+.btn-danger:hover {
+    background: #d32f2f;
+}
+
+.question-card {
+    background: var(--surface);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border);
+}
+.question-card .form-group {
+    margin-bottom: 16px;
+}
+.question-card .answer-item {
+    margin-bottom: 12px;
+}

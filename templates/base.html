@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Система тестов{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body style="
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
+">
+    <div class="container" style="
+        flex: 1 0 auto;
+        width: 100%;
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 0 16px;
+    ">
+        <header style="
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            height: 64px;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+        ">
+            <!-- Логотип -->
+            <div style="
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                font-weight: 700;
+                font-size: 1.4rem;
+                color: var(--primary);
+            ">
+                <span>📚</span>
+                <span>Тести</span>
+            </div>
+
+            <!-- Меню -->
+            <nav style="
+                display: flex;
+                gap: 24px;
+                align-items: center;
+            ">
+                <a href="{{ url_for('index') }}" style="
+                    padding: 8px 16px;
+                    border-radius: 8px;
+                    text-decoration: none;
+                    color: var(--text);
+                    font-weight: 500;
+                    {{ 'background: rgba(59, 130, 246, 0.15);' if request.endpoint == 'index' else '' }}
+                ">Главная</a>
+
+                {% if 'user_id' in session %}
+                {% if session['role'] in ['учитель', 'модератор', 'администратор'] %}
+                <a href="{{ url_for('create_test') }}" style="
+                    padding: 8px 16px;
+                    border-radius: 8px;
+                    text-decoration: none;
+                    color: var(--text);
+                    font-weight: 500;
+                    {{ 'background: rgba(59, 130, 246, 0.15);' if request.endpoint == 'create_test' else '' }}
+                ">Создать</a>
+                <a href="{{ url_for('my_tests') }}" style="
+                    padding: 8px 16px;
+                    border-radius: 8px;
+                    text-decoration: none;
+                    color: var(--text);
+                    font-weight: 500;
+                    {{ 'background: rgba(59, 130, 246, 0.15);' if request.endpoint == 'my_tests' else '' }}
+                ">Мои</a>
+                {% endif %}
+
+                <a href="{{ url_for('test_history') }}" style="
+                    padding: 8px 16px;
+                    border-radius: 8px;
+                    text-decoration: none;
+                    color: var(--text);
+                    font-weight: 500;
+                    {{ 'background: rgba(59, 130, 246, 0.15);' if request.endpoint == 'test_history' else '' }}
+                ">История</a>
+                <a href="{{ url_for('settings') }}" style="
+                    padding: 8px 16px;
+                    border-radius: 8px;
+                    text-decoration: none;
+                    color: var(--text);
+                    font-weight: 500;
+                    {{ 'background: rgba(59, 130, 246, 0.15);' if request.endpoint == 'settings' else '' }}
+                ">Настройки</a>
+
+                {% if session.get('role') == 'модератор' %}
+                <a href="{{ url_for('moder_panel') }}" style="padding: 8px 16px; border-radius: 8px; text-decoration: none; color: var(--text); font-weight:500;">Moder</a>
+                {% endif %}
+
+                {% if session['role'] == 'администратор' %}
+                <a href="{{ url_for('admin_panel') }}" style="
+                    padding: 8px 16px;
+                    border-radius: 8px;
+                    text-decoration: none;
+                    color: var(--text);
+                    font-weight: 500;
+                    {{ 'background: rgba(59, 130, 246, 0.15);' if request.endpoint == 'admin_panel' else '' }}
+                ">Admin</a>
+                {% endif %}
+                {% else %}
+                <a href="{{ url_for('login') }}" style="
+                    padding: 8px 16px;
+                    border-radius: 8px;
+                    text-decoration: none;
+                    color: var(--text);
+                    font-weight: 500;
+                ">Вход</a>
+                <a href="{{ url_for('register') }}" style="
+                    padding: 8px 16px;
+                    border-radius: 8px;
+                    text-decoration: none;
+                    color: var(--text);
+                    font-weight: 500;
+                ">Регистрация</a>
+                {% endif %}
+            </nav>
+
+            <!-- Кнопка ВЫЙТИ -->
+            {% if 'user_id' in session %}
+            <a href="{{ url_for('logout') }}" style="
+                padding: 8px 20px;
+                border-radius: 8px;
+                background: var(--danger);
+                color: white;
+                text-decoration: none;
+                font-weight: 600;
+                font-size: 14px;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                height: 36px;
+                min-width: 80px;
+                justify-content: center;
+            ">
+                <span>🚪</span>
+                <span>Выйти</span>
+            </a>
+            {% endif %}
+        </header>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const notifications = document.querySelector('.notifications');
+                {% for category, message in messages %}
+                const notif = document.createElement('div');
+                notif.className = `notification {{ category }}`;
+                notif.innerHTML = `
+                    <span>{{ message|replace('"', "'") }}</span>
+                    <button class="close-btn">&times;</button>
+                `;
+                notifications.appendChild(notif);
+
+                notif.querySelector('.close-btn').onclick = () => notif.remove();
+
+                setTimeout(() => {
+                    notif.style.opacity = '0';
+                    notif.style.transform = 'translateX(100%)';
+                    setTimeout(() => notif.remove(), 300);
+                }, 5000);
+                {% endfor %}
+            });
+        </script>
+        {% endif %}
+        {% endwith %}
+
+        <main class="content">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <!-- Подвал — всегда внизу -->
+    <footer style="
+        flex-shrink: 0;
+        text-align: center;
+        padding: 20px;
+        background: var(--surface);
+        border-top: 1px solid var(--border);
+        color: var(--text-secondary);
+        font-size: 14px;
+    ">
+        © 2026 Сайт системы тестирования. Все права защищены.
+    </footer>
+
+    <div class="notifications" id="notifications"></div>
+
+    <script>
+        function showNotification(text, type = 'info') {
+            const container = document.getElementById('notifications');
+            const notif = document.createElement('div');
+            notif.className = `notification ${type}`;
+            notif.innerHTML = `<span>${text}</span><button class="close-btn">&times;</button>`;
+            container.appendChild(notif);
+            notif.querySelector('.close-btn').onclick = () => notif.remove();
+            setTimeout(() => {
+                notif.style.opacity = '0';
+                notif.style.transform = 'translateX(100%)';
+                setTimeout(() => notif.remove(), 300);
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

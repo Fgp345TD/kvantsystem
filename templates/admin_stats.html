@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Статистика</h1>
+
+<div style="
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+    margin-top: 24px;
+">
+    <div style="
+        background: var(--surface);
+        border-radius: 12px;
+        padding: 24px;
+        text-align: center;
+    ">
+        <div style="font-size: 2.5rem; color: #3b82f6; margin-bottom: 12px;">👥</div>
+        <div style="font-size: 24px; font-weight: 700;">{{ total_users }}</div>
+        <div style="color: var(--text-secondary);">Всего пользователей</div>
+    </div>
+
+    <div style="
+        background: var(--surface);
+        border-radius: 12px;
+        padding: 24px;
+        text-align: center;
+    ">
+        <div style="font-size: 2.5rem; color: #10b981; margin-bottom: 12px;">📝</div>
+        <div style="font-size: 24px; font-weight: 700;">{{ total_tests }}</div>
+        <div style="color: var(--text-secondary);">Всего тестов</div>
+    </div>
+
+    <div style="
+        background: var(--surface);
+        border-radius: 12px;
+        padding: 24px;
+        text-align: center;
+    ">
+        <div style="font-size: 2.5rem; color: #8b5cf6; margin-bottom: 12px;">🎓</div>
+        <div style="font-size: 24px; font-weight: 700;">{{ teachers }}</div>
+        <div style="color: var(--text-secondary);">Учителей</div>
+    </div>
+
+    <div style="
+        background: var(--surface);
+        border-radius: 12px;
+        padding: 24px;
+        text-align: center;
+    ">
+        <div style="font-size: 2.5rem; color: #6b7280; margin-bottom: 12px;">🧑‍🎓</div>
+        <div style="font-size: 24px; font-weight: 700;">{{ students }}</div>
+        <div style="color: var(--text-secondary);">Учеников</div>
+    </div>
+
+    <div style="
+        background: var(--surface);
+        border-radius: 12px;
+        padding: 24px;
+        text-align: center;
+    ">
+        <div style="font-size: 2.5rem; color: #f59e0b; margin-bottom: 12px;">🛡️</div>
+        <div style="font-size: 24px; font-weight: 700;">{{ moderators }}</div>
+        <div style="color: var(--text-secondary);">Модераторов</div>
+    </div>
+
+    <div style="
+        background: var(--surface);
+        border-radius: 12px;
+        padding: 24px;
+        text-align: center;
+    ">
+        <div style="font-size: 2.5rem; color: #ef4444; margin-bottom: 12px;">👑</div>
+        <div style="font-size: 24px; font-weight: 700;">{{ admins }}</div>
+        <div style="color: var(--text-secondary);">Администраторов</div>
+    </div>
+</div>
+{% endblock %}
